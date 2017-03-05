@@ -38,13 +38,14 @@ There is an html version [here](https://github.com/josemacenteno/CarND-Traffic-S
 
 The code for this step is contained in the second code cell of the IPython notebook.  
 
-I used the pandas library to calculate summary statistics of the traffic
-signs data set:
+I converted the input images to np, which will later be useful for image preprocessing. 
 
-* The size of training set is ?
-* The size of test set is ?
-* The shape of a traffic sign image is ?
-* The number of unique classes/labels in the data set is ?
+I used numpy.shape and python's built in function "len" to calculate basic statistics about the german traffic sign data set used. In particular here are the answers to the questions proposed in the Jupiter notebook:
+
+* The size of training set is 34,799 images
+* The size of test set is 12,630 images
+* The shape of a traffic sign image is 32x32x3
+* The number of unique classes/labels in the data set is 43
 
 ####2. Include an exploratory visualization of the dataset and identify where the code is in your code file.
 
