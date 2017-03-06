@@ -218,11 +218,11 @@ Here are the results of the prediction:
 
 The model was able to correctly guess all 5 of the 5 traffic signs, which gives an accuracy of 100%. This is an even better result than the test set. Again this is probably due to the good quality of the images.
 
-####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction and identify where in your code softmax probabilities were outputted. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
+####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction and identify where in your code softmax probabilities were outputted. Provide the top 5 softmax probabilities for each image along with the sign type of each probability.
 
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
+The code for making predictions on my final model is located in the 18th cell of the Ipython notebook.
 
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
+For the first image, the model is absolutely sure that this is a No entry sign, which is correct.
 
 | Probability | Prediction | 
 |:---------------------:|:---------------------:|
@@ -233,6 +233,9 @@ For the first image, the model is relatively sure that this is a stop sign (prob
 | 0.000 | Turn left ahead |
 
 
+
+For the second image, the model is very uncertain. It gives a 21.6% chance of the image being a children crossing, closely followed by two predictions of images that are also triangles with black figures in the middle. The prediction is correct, but the certainty is not high.
+
 | Probability | Prediction | 
 |:---------------------:|:---------------------:|
 | 0.216 | Children crossing |
@@ -241,6 +244,8 @@ For the first image, the model is relatively sure that this is a stop sign (prob
 | 0.093 | Dangerous curve to the right |
 | 0.071 | Bicycles crossing |
 
+
+Images 3 to 5 are very confident on their prediction. Looks like the speed limit sign was easy, contrary to my expectation. I really think this might be related to how good the images are in Google street view.
 
 | Probability | Prediction | 
 |:---------------------:|:---------------------:|
@@ -268,4 +273,3 @@ For the first image, the model is relatively sure that this is a stop sign (prob
 | 0.000 | Stop |
 | 0.000 | Yield |
 
-For the second image ... 
