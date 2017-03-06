@@ -210,13 +210,9 @@ Here are the results of the prediction:
 | Image | Prediction | 
 |:---------------------:|:---------------------:|
 | No entry | No entry | 
-
 | Children crossing | Children crossing | 
-
 | General caution | General caution | 
-
-| Speed limit (30km/h) | Speed limit (30km/h) | 
-
+| Speed limit (30km/h) | Speed limit (30km/h) |  
 | Keep right | Keep right | 
 
 
@@ -228,13 +224,48 @@ The code for making predictions on my final model is located in the 11th cell of
 
 For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
 
-| Probability         	|     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
+| Probability | Prediction | 
+|:---------------------:|:---------------------:|
+| 1.000 | No entry |
+| 0.000 | Stop |
+| 0.000 | Roundabout mandatory |
+| 0.000 | Keep right |
+| 0.000 | Turn left ahead |
 
+
+| Probability | Prediction | 
+|:---------------------:|:---------------------:|
+| 0.216 | Children crossing |
+| 0.163 | Beware of ice/snow |
+| 0.113 | Pedestrians |
+| 0.093 | Dangerous curve to the right |
+| 0.071 | Bicycles crossing |
+
+
+| Probability | Prediction | 
+|:---------------------:|:---------------------:|
+| 0.981 | General caution |
+| 0.011 | Pedestrians |
+| 0.007 | Traffic signals |
+| 0.000 | Dangerous curve to the right |
+| 0.000 | Road narrows on the right |
+
+
+| Probability | Prediction | 
+|:---------------------:|:---------------------:|
+| 1.000 | Speed limit (30km/h) |
+| 0.000 | Speed limit (20km/h) |
+| 0.000 | Speed limit (50km/h) |
+| 0.000 | Speed limit (70km/h) |
+| 0.000 | Speed limit (80km/h) |
+
+
+| Probability | Prediction | 
+|:---------------------:|:---------------------:|
+| 1.000 | Keep right |
+| 0.000 | Turn left ahead |
+| 0.000 | No vehicles |
+| 0.000 | Stop |
+| 0.000 | Yield |
 
 For the second image ... 
