@@ -86,6 +86,14 @@ This revealed the images of classes 2 and 25 where difficult. I looked at the va
 
 ![alt text][image_2_25]
 
+There was nothing special about the patterns for this signs, so it was susprising to see everytime a tag was incorrectly predicted it corresponded to one of these tags. I thought this could be explained by either having very difficult images in the validation set for these classes, or having an overfit training on them. The overfit explanation is appealing since those are two of the most numerous classes in the training data set. 
+
+I will described how I deal with overfitting later, regarding the validation set having images that are special.
+
+It looked to me like the difficult to classify images were too dark. To improve the contrast on most images I added a pre-processing stage to do histogram equalization. This makes use of the full gray scale color spectrum, which increases the contrast on images. This is a very common step for image processing applications. This is the last step of pre-processing added. Here is a visualization of the trainning data after pre-processing:
+
+![alt_text][image_new_pp]
+
 As a last step, I normalized the image data because ...
 
 ####2. Describe how, and identify where in your code, you set up training, validation and testing data. How much data was in each set? Explain what techniques were used to split the data into these sets. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, identify where in your code, and provide example images of the additional data)
