@@ -11,14 +11,20 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image_random_train]: ./examples/visualization.jpg "Visualization"
-[image2]: ./examples/grayscale.jpg "Grayscaling"
-[image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
+
+
+[image_2_25]: ./writup_images/2_25_difficult_images.png "Images Hard to clasiffy"
+[image_hist_y]: ./writup_images/hist_y_train.png "Train set class histogram"
+[image_new_images]: ./writup_images/new_images_from_google_maps.png "Resized new imaged (32x32)"
+[image_new_pp]: ./writup_images/new_images_post_processed.png "New images post-processed"
+[image_train_pp]: ./writup_images/post_processed_train_images.jpg "Post-processed image"
+[image_random_train]: ./writup_images/random_train_images.jpg "Visualization"
+[image_new_1]: ./new_images/1.jpg "New Image 1"
+[image_new_17]: ./new_images/17.jpg "New Image 17"
+[image_new_18]: ./new_images/18.jpg "New Image 18"
+[image_new_28]: ./new_images/28.jpg "New Image 28"
+[image_new_38]: ./new_images/38.jpg "New Image 38"
+
 
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
