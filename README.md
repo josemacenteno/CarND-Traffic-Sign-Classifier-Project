@@ -82,7 +82,9 @@ incorrect_prediction = tf.logical_not(correct_prediction)
 wrong_tags = tf.boolean_mask(y, tf.reshape(incorrect_prediction, shape = [-1]))
 ```
 
-![alt text][image2]
+This revealed the images of classes 2 and 25 where difficult. I looked at the validation data set.
+
+![alt text][image_2_25]
 
 As a last step, I normalized the image data because ...
 
