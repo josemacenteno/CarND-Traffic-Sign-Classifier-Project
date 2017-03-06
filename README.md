@@ -86,32 +86,38 @@ This revealed the images of classes 2 and 25 where difficult. I looked at the va
 
 ![alt text][image_2_25]
 
-There was nothing special about the patterns for this signs, so it was susprising to see everytime a tag was incorrectly predicted it corresponded to one of these tags. I thought this could be explained by either having very difficult images in the validation set for these classes, or having an overfit training on them. The overfit explanation is appealing since those are two of the most numerous classes in the training data set. 
-
-I will described how I deal with overfitting later, regarding the validation set having images that are special.
+There was nothing special about the patterns for this signs, so it was susprising to see everytime a tag was incorrectly predicted it corresponded to one of these tags. I thought this could be explained by either having very difficult images in the validation set for these classes, or having an overfit training on them. The overfit explanation is appealing since those are two of the most numerous classes in the training data set. I will described how I deal with overfitting later.
 
 It looked to me like the difficult to classify images were too dark. To improve the contrast on most images I added a pre-processing stage to do histogram equalization. This makes use of the full gray scale color spectrum, which increases the contrast on images. This is a very common step for image processing applications. This is the last step of pre-processing added. Here is a visualization of the trainning data after pre-processing:
 
 ![alt_text][image_new_pp]
 
-As a last step, I normalized the image data because ...
 
 ####2. Describe how, and identify where in your code, you set up training, validation and testing data. How much data was in each set? Explain what techniques were used to split the data into these sets. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, identify where in your code, and provide example images of the additional data)
 
-The code for splitting the data into training and validation sets is contained in the fifth code cell of the IPython notebook.  
+The trainning set was divided in train and valid tags. As described in the pre-processing visualization some of the images in the validation set were always problematic for the LeNet model defined in code cell 10. I wanted to include the images in the validation set as part of the training data set. I opted to merge them in cell 3. 
 
-To cross validate my model, I randomly split the training data into a training set and validation set. I did this by ...
+Since I didn keep a eparate static validation set, I opted to do cross validation on my model.
 
-My final training set had X number of images. My validation set and test set had Y and Z number of images.
+Cell 11 handles the batching and cross validation splitting. I randomly split the training data into a training set and validation set. Here is the code used:
+```
+X_train_pp, y_train_pp = shuffle(X_train_pp, y_train_pp)
+X_xval_train, X_xval_valid, y_xval_train, y_xval_valid = train_test_split(X_train_pp, y_train_pp, test_size=0.20, random_state=i)
+num_examples = len(X_xval_train)
+for offset in range(0, num_examples, BATCH_SIZE):
+       end = offset + BATCH_SIZE
+       batch_x, batch_y = X_xval_train[offset:end], y_xval_train[offset:end]
+       sess.run(training_operation, feed_dict={x: batch_x, y: batch_y, keep: dropout_keep_prob})
+           
+ validation_accuracy = evaluate(X_xval_valid, y_xval_valid)      
+```
+Now, there was already a concern for over fitting given that the trainning data set is not balanced. I am making this a bit worse by doing cross-validation and trainning the model on validation images during other epochs. To counter act this I added a dropout layer after each activation function of the LeNet model. I tried several values for dropout but it was clear to me that keep probabilities under 0.75 where to aggressive. Since I really wanted to get closer to 0.5 I made the model larger, able to handle features on more neurons during the conv net. I made the Convolutional layer almost twice as large and settled for a dropout keep probability of 0.6
 
-The sixth code cell of the IPython notebook contains the code for augmenting the data set. I decided to generate additional data because ... To add more data to the the data set, I used the following techniques because ... 
+Using drop out keep rate of 0.75 I got cross-validation accuracy numbers aroung 0.93. After making the convolutional filter depth twice as large and lowering the drop-out keep rate to 0.6 I got up to 0.98, with just a few miss-predicitons. I am happy with this values.
 
-Here is an example of an original image and an augmented image:
+I tested on the images that were provided as a test set and see 0.92 validation accuracy, which is 7% higher than the original numbers in the static validation set. This means that the techniques used are effective, but we can still find room for improvement.
 
-![alt text][image3]
-
-The difference between the original data set and the augmented data set is the following ... 
-
+Data augmentation to balance the training set can help to avoid overfitting beyond what drop out can do. This might translate into a test validation accuracy closer to the 0.98 we see in the cross-validation accueracy calculations.
 
 ####3. Describe, and identify where in your code, what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
 
@@ -121,16 +127,19 @@ My final model consisted of the following layers:
 
 | Layer         		|     Description	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
-| RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
-|						|												|
-|						|												|
- 
+| Input         		| 32x32x1 gray scale images   							| 
+| Convolution 5x5  | 1x1 stride, valid padding, outputs 28x28x16 	|
+| RELU + Dropout		| 												|
+| Max pooling	     | 2x2 stride,  outputs 14x14x16 				| 
+| Convolution 5x5  | 1x1 stride, valid padding, outputs 10x10x32 	|
+| RELU + Dropout		| 												|
+| Max pooling	     | 2x2 stride,  outputs 5x5x32 				|
+| Fully connected		| Flat input of 800 features and 120 outputs			|
+| RELU + Dropout		| 												|
+| Fully connected		| Flat input of 120 features and 84 outputs			|
+| RELU + Dropout		| 												|
+| Fully connected		| Flat input of 84 features and 43 outputs			|
+| Softmax	+ reduce_mean			| used for trainning operation (Error calculation).	|
 
 
 ####4. Describe how, and identify where in your code, you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
