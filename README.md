@@ -129,45 +129,57 @@ My final model consisted of the following layers:
 |:---------------------:|:---------------------------------------------:| 
 | Input         		| 32x32x1 gray scale images   							| 
 | Convolution 5x5  | 1x1 stride, valid padding, outputs 28x28x16 	|
-| RELU + Dropout		| 												|
+| RELU + Dropout		| Keep probability of 0.6						|
 | Max pooling	     | 2x2 stride,  outputs 14x14x16 				| 
 | Convolution 5x5  | 1x1 stride, valid padding, outputs 10x10x32 	|
-| RELU + Dropout		| 												|
+| RELU + Dropout		| Keep probability of 0.6				|
 | Max pooling	     | 2x2 stride,  outputs 5x5x32 				|
 | Fully connected		| Flat input of 800 features and 120 outputs			|
-| RELU + Dropout		| 												|
+| RELU + Dropout		| Keep probability of 0.6				|
 | Fully connected		| Flat input of 120 features and 84 outputs			|
-| RELU + Dropout		| 												|
+| RELU + Dropout		| Keep probability of 0.6					|
 | Fully connected		| Flat input of 84 features and 43 outputs			|
-| Softmax	+ reduce_mean			| used for trainning operation (Error calculation).	|
+| Softmax	+ reduce_mean			| Used for trainning operation (Error calculation).	|
 
 
 ####4. Describe how, and identify where in your code, you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
 
-The code for training the model is located in the eigth cell of the ipython notebook. 
+The code for training the model is located in the eleventh cell of the ipython notebook. 
 
-To train the model, I used an ....
+To train the model, I reused a lot of the code from the LeNet lab. It uses a cross_entropy_softmax function with a mean_reduce operation as the error calculation. It uses an adam_optimizer fro tranning. THe validation accuracy is calcualted by finding the largest weight in the logits and taking it as the prediction. We then use the label to compare the error:
+```
+logits = LeNet(x, keep)
+cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits = logits, labels = one_hot_y)
+loss_operation = tf.reduce_mean(cross_entropy)
+optimizer = tf.train.AdamOptimizer(learning_rate = learning_rate)
+training_operation = optimizer.minimize(loss_operation)
+
+correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(one_hot_y, 1))
+accuracy_operation = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+```
+Each epoc splits the data, trains on every image in the tranning set and then evaluates the model using the cross-validation set defined at the beggining of the epoch.
+
+After about7 epochs I didn't see much progress, so I lowered the learning rate to 0.05, and increased the number of epochs to 20. The saturation is reached aroung epoch 11 though.
+
 
 ####5. Describe the approach taken for finding a solution. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
-The code for calculating the accuracy of the model is located in the ninth cell of the Ipython notebook.
+The code for calculating the accuracy of the model is located in the eleventh cell of the Ipython notebook.
 
 My final model results were:
-* training set accuracy of ?
-* validation set accuracy of ? 
-* test set accuracy of ?
+* Cross-validation set accuracy of 0.969 
+* test set accuracy of 0.919
 
-If an iterative approach was chosen:
-* What was the first architecture that was tried and why was it chosen?
-* What were some problems with the initial architecture?
-* How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to over fitting or under fitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
-* Which parameters were tuned? How were they adjusted and why?
-* What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
+Here is a summary of the techniques used:
+
 
 If a well known architecture was chosen:
-* What architecture was chosen?
-* Why did you believe it would be relevant to the traffic sign application?
-* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
+* The LeNet architecture was used as a starting point
+* After adding aggresive dropout validation accuracy could fall up to 0.40
+* Not so aggresive dropout keep probability of 0.6 was chosen, but the depth of the convolution filters was doubled.
+* Learning rate and epoch were tuned after every major pre-processing step or architecture change.
+* The LeNet based architecture is great for images. The convolutional layers at the input extract the patterns that define the different traffic signs regardless of the position or roation of the sign in the 32x32 image input. The fully connected layers also do a good job at classifying the features extracted on the convolutional steps.
+* The cross validation reached 0.98 accuracy, and didn make any prediction mistake on some epochs. This proves the architecture and changes made are good for the task at hand.
  
 
 ###Test a Model on New Images
@@ -179,16 +191,16 @@ Here are five German traffic signs that I found on google maps (downtown Berlin)
 ![alt text][image_new_1] ![alt text][image_new_17] ![alt text][image_new_18] 
 ![alt text][image_new_28] ![alt text][image_new_38]
 
-I got all the images from Google Maps. I think the contrast is pretty good on all of them. 
+I got all the images from Google Maps. I think the contrast is pretty good on all of them. I basically walked around Berlin downtown on street view and captured the first 5 signs I found that had a corresponding class in the dataset analyzed.
 
-The first image may be diffucult. The 3 is very clearly marked and the contrast is better than most training images, but the validation set reported problems to classify speed limit images in general.
+From the new images The first one may be diffucult. The 3 is very clearly marked and the contrast is better than most training images, but the testing set reported problems to classify some speed limit images.
 
-The fourth image might me difficult to classify since the figure in the middle has a lot of details, and there are many similar triangular images. It seems like 32x32 pixels is not enough to describe the figure in detail.
+The fourth image might me difficult to classify since the figure in the middle has a lot of details, and there are many similar triangular images. It seems like 32x32 pixels is not enough to describe the figure in enough detail.
 
 
-####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. Identify where in your code predictions were made. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
+####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. I
 
-The code for making predictions on my final model is located in the tenth cell of the Ipython notebook.
+The code for making predictions on my final model is located in the fiftinth cell of the Ipython notebook.
 
 Here are the results of the prediction:
 
@@ -201,7 +213,7 @@ Here are the results of the prediction:
 | Slippery Road			| Slippery Road      							|
 
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+The model was able to correctly guess all 5 of the 5 traffic signs, which gives an accuracy of 100%. This is an even better result than the test set. Again this is probably due to the good quality of the images.
 
 ####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction and identify where in your code softmax probabilities were outputted. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
