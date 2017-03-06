@@ -207,13 +207,17 @@ The code for making predictions on my final model is located in the fiftinth cel
 
 Here are the results of the prediction:
 
-| Image			        |     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+| Image | Prediction | 
+|:---------------------:|:---------------------:|
+| No entry | No entry | 
+
+| Children crossing | Children crossing | 
+
+| General caution | General caution | 
+
+| Speed limit (30km/h) | Speed limit (30km/h) | 
+
+| Keep right | Keep right | 
 
 
 The model was able to correctly guess all 5 of the 5 traffic signs, which gives an accuracy of 100%. This is an even better result than the test set. Again this is probably due to the good quality of the images.
