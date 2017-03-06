@@ -11,7 +11,7 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/visualization.jpg "Visualization"
+[image_random_train]: ./examples/visualization.jpg "Visualization"
 [image2]: ./examples/grayscale.jpg "Grayscaling"
 [image3]: ./examples/random_noise.jpg "Random Noise"
 [image4]: ./examples/placeholder.png "Traffic Sign 1"
@@ -49,11 +49,12 @@ I used numpy.shape and python's built in function "len" to calculate basic stati
 
 ####2. Include an exploratory visualization of the dataset and identify where the code is in your code file.
 
-The code for this step is contained in the third code cell of the IPython notebook.  
+The code for this step is contained in code cells 4-7 code cells of the IPython notebook. It is a random showing of 30 traffic signs from the training data set, and a histogram.
 
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data ...
+![alt text][image_random_train]
 
-![alt text][image1]
+The histogram counts how many images belong to each of the 43 classes, to give an idea of how balanced is the data set.
+![alt text][image_train_histogram]
 
 ###Design and Test a Model Architecture
 
