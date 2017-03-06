@@ -90,7 +90,7 @@ There was nothing special about the patterns for this signs, so it was susprisin
 
 It looked to me like the difficult to classify images were too dark. To improve the contrast on most images I added a pre-processing stage to do histogram equalization. This makes use of the full gray scale color spectrum, which increases the contrast on images. This is a very common step for image processing applications. This is the last step of pre-processing added. Here is a visualization of the trainning data after pre-processing:
 
-![alt_text][image_new_pp]
+![alt_text][image_train_pp]
 
 
 ####2. Describe how, and identify where in your code, you set up training, validation and testing data. How much data was in each set? Explain what techniques were used to split the data into these sets. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, identify where in your code, and provide example images of the additional data)
@@ -199,6 +199,9 @@ The fourth image might me difficult to classify since the figure in the middle h
 
 
 ####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. I
+
+Here is a visualization of the new images after resize and pre-processing:
+![alt_text][image_new_pp]
 
 The code for making predictions on my final model is located in the fiftinth cell of the Ipython notebook.
 
