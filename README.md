@@ -147,8 +147,8 @@ If a well known architecture was chosen:
 
 Here are five German traffic signs that I found on the web:
 
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
+![alt text][image_new_1] ![alt text][image_new_17] ![alt text][image_new_18] 
+![alt text][image_new_28] ![alt text][image_new_38]
 
 The first image might be difficult to classify because ...
 
