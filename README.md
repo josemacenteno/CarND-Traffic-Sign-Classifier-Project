@@ -60,7 +60,8 @@ The code for this step is contained in code cells 4-7 code cells of the IPython 
 ![alt text][image_random_train]
 
 The histogram counts how many images belong to each of the 43 classes, to give an idea of how balanced is the data set.
-![alt text][image_train_histogram]
+
+![alt text][image_hist_y]
 
 ###Design and Test a Model Architecture
 
@@ -159,7 +160,7 @@ accuracy_operation = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 ```
 Each epoc splits the data, trains on every image in the tranning set and then evaluates the model using the cross-validation set defined at the beggining of the epoch.
 
-After about7 epochs I didn't see much progress, so I lowered the learning rate to 0.05, and increased the number of epochs to 20. The saturation is reached aroung epoch 11 though.
+After about 7 epochs I didn't see much progress, so I lowered the learning rate to 0.05, and increased the number of epochs to 20. The saturation is reached aroung epoch 11 though.
 
 
 ####5. Describe the approach taken for finding a solution. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
