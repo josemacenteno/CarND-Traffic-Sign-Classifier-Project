@@ -11,14 +11,20 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image_random_train]: ./examples/visualization.jpg "Visualization"
-[image2]: ./examples/grayscale.jpg "Grayscaling"
-[image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
+
+
+[image_2_25]: ./writup_images/2_25_difficult_images.png "Images Hard to clasiffy"
+[image_hist_y]: ./writup_images/hist_y_train.png "Train set class histogram"
+[image_new_images]: ./writup_images/new_images_from_google_maps.png "Resized new imaged (32x32)"
+[image_new_pp]: ./writup_images/new_images_post_processed.png "New images post-processed"
+[image_train_pp]: ./writup_images/post_processed_train_images.jpg "Post-processed image"
+[image_random_train]: ./writup_images/random_train_images.jpg "Visualization"
+[image_new_1]: ./new_images/1.jpg "New Image 1"
+[image_new_17]: ./new_images/17.jpg "New Image 17"
+[image_new_18]: ./new_images/18.jpg "New Image 18"
+[image_new_28]: ./new_images/28.jpg "New Image 28"
+[image_new_38]: ./new_images/38.jpg "New Image 38"
+
 
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
@@ -60,32 +66,58 @@ The histogram counts how many images belong to each of the 43 classes, to give a
 
 ####1. Describe how, and identify where in your code, you preprocessed the image data. What tecniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc.
 
-The code for this step is contained in the fourth code cell of the IPython notebook.
+The code for this step is contained in code cells 8-9  of the IPython notebook.
 
-As a first step, I decided to convert the images to grayscale because ...
+The first step was to do to do a min-max rescaling to normalize the data. The min_max_scale function implements the normalization. Before I added more pre-processing techniques, I tried some trial trainings on basic models...
 
-Here is an example of a traffic sign image before and after grayscaling.
+The LeNet model from the Udacity lecture lab was first. It gave me a validation accuracy of 85%. I played a little bit with the batch size. I notice d my PC can handle up to 1024 batches, but the memory is almost 100% used, so I kept the batches at 256 to make sure I always have enough memor. even if the model grows I thuink my PC can handle batches of 256.
 
-![alt text][image2]
+I also played with the learning rate. The best validation accuracy correspondes to a learning rate of 0.01. The validation accuracy was 0.90
 
-As a last step, I normalized the image data because ...
+After tuning the initial hyper parameters I tried with grayscale images.This pre-processing technique was suggested by the instructions of the project itself.No improvement or penalty was measured in terms of accuracy. I left the gray-scale step since this makes the model smaller.
+
+Before I started adding more steps I tried adding a tensof flow "visualization" for the wrong prediction. Some extra nodes in the graph extract the predictions that were misclassified:
+```
+incorrect_prediction = tf.logical_not(correct_prediction)
+wrong_tags = tf.boolean_mask(y, tf.reshape(incorrect_prediction, shape = [-1]))
+```
+
+This revealed the images of classes 2 and 25 where difficult. I looked at the validation data set.
+
+![alt text][image_2_25]
+
+There was nothing special about the patterns for this signs, so it was susprising to see everytime a tag was incorrectly predicted it corresponded to one of these tags. I thought this could be explained by either having very difficult images in the validation set for these classes, or having an overfit training on them. The overfit explanation is appealing since those are two of the most numerous classes in the training data set. I will described how I deal with overfitting later.
+
+It looked to me like the difficult to classify images were too dark. To improve the contrast on most images I added a pre-processing stage to do histogram equalization. This makes use of the full gray scale color spectrum, which increases the contrast on images. This is a very common step for image processing applications. This is the last step of pre-processing added. Here is a visualization of the trainning data after pre-processing:
+
+![alt_text][image_train_pp]
+
 
 ####2. Describe how, and identify where in your code, you set up training, validation and testing data. How much data was in each set? Explain what techniques were used to split the data into these sets. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, identify where in your code, and provide example images of the additional data)
 
-The code for splitting the data into training and validation sets is contained in the fifth code cell of the IPython notebook.  
+The trainning set was divided in train and valid tags. As described in the pre-processing visualization some of the images in the validation set were always problematic for the LeNet model defined in code cell 10. I wanted to include the images in the validation set as part of the training data set. I opted to merge them in cell 3. 
 
-To cross validate my model, I randomly split the training data into a training set and validation set. I did this by ...
+Since I didn keep a eparate static validation set, I opted to do cross validation on my model.
 
-My final training set had X number of images. My validation set and test set had Y and Z number of images.
+Cell 11 handles the batching and cross validation splitting. I randomly split the training data into a training set and validation set. Here is the code used:
+```
+X_train_pp, y_train_pp = shuffle(X_train_pp, y_train_pp)
+X_xval_train, X_xval_valid, y_xval_train, y_xval_valid = train_test_split(X_train_pp, y_train_pp, test_size=0.20, random_state=i)
+num_examples = len(X_xval_train)
+for offset in range(0, num_examples, BATCH_SIZE):
+       end = offset + BATCH_SIZE
+       batch_x, batch_y = X_xval_train[offset:end], y_xval_train[offset:end]
+       sess.run(training_operation, feed_dict={x: batch_x, y: batch_y, keep: dropout_keep_prob})
+           
+ validation_accuracy = evaluate(X_xval_valid, y_xval_valid)      
+```
+Now, there was already a concern for over fitting given that the trainning data set is not balanced. I am making this a bit worse by doing cross-validation and trainning the model on validation images during other epochs. To counter act this I added a dropout layer after each activation function of the LeNet model. I tried several values for dropout but it was clear to me that keep probabilities under 0.75 where to aggressive. Since I really wanted to get closer to 0.5 I made the model larger, able to handle features on more neurons during the conv net. I made the Convolutional layer almost twice as large and settled for a dropout keep probability of 0.6
 
-The sixth code cell of the IPython notebook contains the code for augmenting the data set. I decided to generate additional data because ... To add more data to the the data set, I used the following techniques because ... 
+Using drop out keep rate of 0.75 I got cross-validation accuracy numbers aroung 0.93. After making the convolutional filter depth twice as large and lowering the drop-out keep rate to 0.6 I got up to 0.98, with just a few miss-predicitons. I am happy with this values.
 
-Here is an example of an original image and an augmented image:
+I tested on the images that were provided as a test set and see 0.92 validation accuracy, which is 7% higher than the original numbers in the static validation set. This means that the techniques used are effective, but we can still find room for improvement.
 
-![alt text][image3]
-
-The difference between the original data set and the augmented data set is the following ... 
-
+Data augmentation to balance the training set can help to avoid overfitting beyond what drop out can do. This might translate into a test validation accuracy closer to the 0.98 we see in the cross-validation accueracy calculations.
 
 ####3. Describe, and identify where in your code, what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
 
@@ -95,73 +127,96 @@ My final model consisted of the following layers:
 
 | Layer         		|     Description	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
-| RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
-|						|												|
-|						|												|
- 
+| Input         		| 32x32x1 gray scale images   							| 
+| Convolution 5x5  | 1x1 stride, valid padding, outputs 28x28x16 	|
+| RELU + Dropout		| Keep probability of 0.6						|
+| Max pooling	     | 2x2 stride,  outputs 14x14x16 				| 
+| Convolution 5x5  | 1x1 stride, valid padding, outputs 10x10x32 	|
+| RELU + Dropout		| Keep probability of 0.6				|
+| Max pooling	     | 2x2 stride,  outputs 5x5x32 				|
+| Fully connected		| Flat input of 800 features and 120 outputs			|
+| RELU + Dropout		| Keep probability of 0.6				|
+| Fully connected		| Flat input of 120 features and 84 outputs			|
+| RELU + Dropout		| Keep probability of 0.6					|
+| Fully connected		| Flat input of 84 features and 43 outputs			|
+| Softmax	+ reduce_mean			| Used for trainning operation (Error calculation).	|
 
 
 ####4. Describe how, and identify where in your code, you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
 
-The code for training the model is located in the eigth cell of the ipython notebook. 
+The code for training the model is located in the eleventh cell of the ipython notebook. 
 
-To train the model, I used an ....
+To train the model, I reused a lot of the code from the LeNet lab. It uses a cross_entropy_softmax function with a mean_reduce operation as the error calculation. It uses an adam_optimizer fro tranning. THe validation accuracy is calcualted by finding the largest weight in the logits and taking it as the prediction. We then use the label to compare the error:
+```
+logits = LeNet(x, keep)
+cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits = logits, labels = one_hot_y)
+loss_operation = tf.reduce_mean(cross_entropy)
+optimizer = tf.train.AdamOptimizer(learning_rate = learning_rate)
+training_operation = optimizer.minimize(loss_operation)
+
+correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(one_hot_y, 1))
+accuracy_operation = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+```
+Each epoc splits the data, trains on every image in the tranning set and then evaluates the model using the cross-validation set defined at the beggining of the epoch.
+
+After about7 epochs I didn't see much progress, so I lowered the learning rate to 0.05, and increased the number of epochs to 20. The saturation is reached aroung epoch 11 though.
+
 
 ####5. Describe the approach taken for finding a solution. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
-The code for calculating the accuracy of the model is located in the ninth cell of the Ipython notebook.
+The code for calculating the accuracy of the model is located in the eleventh cell of the Ipython notebook.
 
 My final model results were:
-* training set accuracy of ?
-* validation set accuracy of ? 
-* test set accuracy of ?
+* Cross-validation set accuracy of 0.969 
+* test set accuracy of 0.919
 
-If an iterative approach was chosen:
-* What was the first architecture that was tried and why was it chosen?
-* What were some problems with the initial architecture?
-* How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to over fitting or under fitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
-* Which parameters were tuned? How were they adjusted and why?
-* What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
+Here is a summary of the techniques used:
+
 
 If a well known architecture was chosen:
-* What architecture was chosen?
-* Why did you believe it would be relevant to the traffic sign application?
-* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
+* The LeNet architecture was used as a starting point
+* After adding aggresive dropout validation accuracy could fall up to 0.40
+* Not so aggresive dropout keep probability of 0.6 was chosen, but the depth of the convolution filters was doubled.
+* Learning rate and epoch were tuned after every major pre-processing step or architecture change.
+* The LeNet based architecture is great for images. The convolutional layers at the input extract the patterns that define the different traffic signs regardless of the position or roation of the sign in the 32x32 image input. The fully connected layers also do a good job at classifying the features extracted on the convolutional steps.
+* The cross validation reached 0.98 accuracy, and didn make any prediction mistake on some epochs. This proves the architecture and changes made are good for the task at hand.
  
 
 ###Test a Model on New Images
 
 ####1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
 
-Here are five German traffic signs that I found on the web:
+Here are five German traffic signs that I found on google maps (downtown Berlin):
 
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
+![alt text][image_new_1] ![alt text][image_new_17] ![alt text][image_new_18] 
+![alt text][image_new_28] ![alt text][image_new_38]
 
-The first image might be difficult to classify because ...
+I got all the images from Google Maps. I think the contrast is pretty good on all of them. I basically walked around Berlin downtown on street view and captured the first 5 signs I found that had a corresponding class in the dataset analyzed.
 
-####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. Identify where in your code predictions were made. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
+From the new images The first one may be diffucult. The 3 is very clearly marked and the contrast is better than most training images, but the testing set reported problems to classify some speed limit images.
 
-The code for making predictions on my final model is located in the tenth cell of the Ipython notebook.
+The fourth image might me difficult to classify since the figure in the middle has a lot of details, and there are many similar triangular images. It seems like 32x32 pixels is not enough to describe the figure in enough detail.
+
+
+####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. I
+
+Here is a visualization of the new images after resize and pre-processing:
+![alt_text][image_new_pp]
+
+The code for making predictions on my final model is located in the fiftinth cell of the Ipython notebook.
 
 Here are the results of the prediction:
 
-| Image			        |     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+| Image | Prediction | 
+|:---------------------:|:---------------------:|
+| No entry | No entry | 
+| Children crossing | Children crossing | 
+| General caution | General caution | 
+| Speed limit (30km/h) | Speed limit (30km/h) |  
+| Keep right | Keep right | 
 
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+The model was able to correctly guess all 5 of the 5 traffic signs, which gives an accuracy of 100%. This is an even better result than the test set. Again this is probably due to the good quality of the images.
 
 ####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction and identify where in your code softmax probabilities were outputted. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
@@ -169,13 +224,48 @@ The code for making predictions on my final model is located in the 11th cell of
 
 For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
 
-| Probability         	|     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
+| Probability | Prediction | 
+|:---------------------:|:---------------------:|
+| 1.000 | No entry |
+| 0.000 | Stop |
+| 0.000 | Roundabout mandatory |
+| 0.000 | Keep right |
+| 0.000 | Turn left ahead |
 
+
+| Probability | Prediction | 
+|:---------------------:|:---------------------:|
+| 0.216 | Children crossing |
+| 0.163 | Beware of ice/snow |
+| 0.113 | Pedestrians |
+| 0.093 | Dangerous curve to the right |
+| 0.071 | Bicycles crossing |
+
+
+| Probability | Prediction | 
+|:---------------------:|:---------------------:|
+| 0.981 | General caution |
+| 0.011 | Pedestrians |
+| 0.007 | Traffic signals |
+| 0.000 | Dangerous curve to the right |
+| 0.000 | Road narrows on the right |
+
+
+| Probability | Prediction | 
+|:---------------------:|:---------------------:|
+| 1.000 | Speed limit (30km/h) |
+| 0.000 | Speed limit (20km/h) |
+| 0.000 | Speed limit (50km/h) |
+| 0.000 | Speed limit (70km/h) |
+| 0.000 | Speed limit (80km/h) |
+
+
+| Probability | Prediction | 
+|:---------------------:|:---------------------:|
+| 1.000 | Keep right |
+| 0.000 | Turn left ahead |
+| 0.000 | No vehicles |
+| 0.000 | Stop |
+| 0.000 | Yield |
 
 For the second image ... 
