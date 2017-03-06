@@ -66,11 +66,21 @@ The histogram counts how many images belong to each of the 43 classes, to give a
 
 ####1. Describe how, and identify where in your code, you preprocessed the image data. What tecniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc.
 
-The code for this step is contained in the fourth code cell of the IPython notebook.
+The code for this step is contained in code cells 8-9  of the IPython notebook.
 
-As a first step, I decided to convert the images to grayscale because ...
+The first step was to do to do a min-max rescaling to normalize the data. The min_max_scale function implements the normalization. Before I added more pre-processing techniques, I tried some trial trainings on basic models...
 
-Here is an example of a traffic sign image before and after grayscaling.
+The LeNet model from the Udacity lecture lab was first. It gave me a validation accuracy of 85%. I played a little bit with the batch size. I notice d my PC can handle up to 1024 batches, but the memory is almost 100% used, so I kept the batches at 256 to make sure I always have enough memor. even if the model grows I thuink my PC can handle batches of 256.
+
+I also played with the learning rate. The best validation accuracy correspondes to a learning rate of 0.01. The validation accuracy was 0.90
+
+After tuning the initial hyper parameters I tried with grayscale images.This pre-processing technique was suggested by the instructions of the project itself.No improvement or penalty was measured in terms of accuracy. I left the gray-scale step since this makes the model smaller.
+
+Before I started adding more steps I tried adding a tensof flow "visualization" for the wrong prediction. Some extra nodes in the graph extract the predictions that were misclassified:
+```
+incorrect_prediction = tf.logical_not(correct_prediction)
+wrong_tags = tf.boolean_mask(y, tf.reshape(incorrect_prediction, shape = [-1]))
+```
 
 ![alt text][image2]
 
@@ -145,12 +155,17 @@ If a well known architecture was chosen:
 
 ####1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
 
-Here are five German traffic signs that I found on the web:
+Here are five German traffic signs that I found on google maps (downtown Berlin):
 
 ![alt text][image_new_1] ![alt text][image_new_17] ![alt text][image_new_18] 
 ![alt text][image_new_28] ![alt text][image_new_38]
 
-The first image might be difficult to classify because ...
+I got all the images from Google Maps. I think the contrast is pretty good on all of them. 
+
+The first image may be diffucult. The 3 is very clearly marked and the contrast is better than most training images, but the validation set reported problems to classify speed limit images in general.
+
+The fourth image might me difficult to classify since the figure in the middle has a lot of details, and there are many similar triangular images. It seems like 32x32 pixels is not enough to describe the figure in detail.
+
 
 ####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. Identify where in your code predictions were made. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
