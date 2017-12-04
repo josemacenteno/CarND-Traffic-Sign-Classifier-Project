@@ -27,20 +27,20 @@ The goals / steps of this project are the following:
 
 
 ## Rubric Points
-###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
+### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
 
 ---
-###Writeup / README
+### Writeup / README
 
-####1. Provide a Writeup / README that includes all the rubric points and how you addressed each one. You can submit your writeup as markdown or pdf. You can use this template as a guide for writing the report. The submission includes the project code.
+#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one. You can submit your writeup as markdown or pdf. You can use this template as a guide for writing the report. The submission includes the project code.
 
 You're reading it! and here is a link to my [project code](https://github.com/josemacenteno/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb)
 
 There is an html version [here](https://github.com/josemacenteno/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.html)
 
-###Data Set Summary & Exploration
+### Data Set Summary & Exploration
 
-####1. Provide a basic summary of the data set and identify where in your code the summary was done. In the code, the analysis should be done using python, numpy and/or pandas methods rather than hardcoding results manually.
+#### 1. Provide a basic summary of the data set and identify where in your code the summary was done. In the code, the analysis should be done using python, numpy and/or pandas methods rather than hardcoding results manually.
 
 The code for this step is contained in the second code cell of the IPython notebook.  
 
@@ -53,7 +53,7 @@ I used numpy.shape and python's built in function "len" to calculate basic stati
 * The shape of a traffic sign image is 32x32x3
 * The number of unique classes/labels in the data set is 43
 
-####2. Include an exploratory visualization of the dataset and identify where the code is in your code file.
+#### 2. Include an exploratory visualization of the dataset and identify where the code is in your code file.
 
 The code for this step is contained in code cells 4-7 code cells of the IPython notebook. It is a random showing of 30 traffic signs from the training data set, and a histogram.
 
@@ -63,9 +63,9 @@ The histogram counts how many images belong to each of the 43 classes, to give a
 
 ![alt text][image_hist_y]
 
-###Design and Test a Model Architecture
+### Design and Test a Model Architecture
 
-####1. Describe how, and identify where in your code, you preprocessed the image data. What tecniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc.
+#### 1. Describe how, and identify where in your code, you preprocessed the image data. What tecniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc.
 
 The code for this step is contained in code cells 8-9  of the IPython notebook.
 
@@ -94,7 +94,7 @@ It looked to me like the difficult to classify images were too dark. To improve 
 ![alt_text][image_train_pp]
 
 
-####2. Describe how, and identify where in your code, you set up training, validation and testing data. How much data was in each set? Explain what techniques were used to split the data into these sets. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, identify where in your code, and provide example images of the additional data)
+#### 2. Describe how, and identify where in your code, you set up training, validation and testing data. How much data was in each set? Explain what techniques were used to split the data into these sets. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, identify where in your code, and provide example images of the additional data)
 
 The trainning set was divided in train and valid tags. As described in the pre-processing visualization some of the images in the validation set were always problematic for the LeNet model defined in code cell 10. I wanted to include the images in the validation set as part of the training data set. I opted to merge them in cell 3. 
 
@@ -120,7 +120,7 @@ I tested on the images that were provided as a test set and see 0.92 validation 
 
 Data augmentation to balance the training set can help to avoid overfitting beyond what drop out can do. This might translate into a test validation accuracy closer to the 0.98 we see in the cross-validation accueracy calculations.
 
-####3. Describe, and identify where in your code, what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
+#### 3. Describe, and identify where in your code, what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
 
 The code for my final model is located in the seventh cell of the ipython notebook. 
 
@@ -143,7 +143,7 @@ My final model consisted of the following layers:
 | Softmax	+ reduce_mean			| Used for trainning operation (Error calculation).	|
 
 
-####4. Describe how, and identify where in your code, you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
+#### 4. Describe how, and identify where in your code, you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
 
 The code for training the model is located in the eleventh cell of the ipython notebook. 
 
@@ -163,7 +163,7 @@ Each epoc splits the data, trains on every image in the tranning set and then ev
 After about 7 epochs I didn't see much progress, so I lowered the learning rate to 0.05, and increased the number of epochs to 20. The saturation is reached aroung epoch 11 though.
 
 
-####5. Describe the approach taken for finding a solution. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
+#### 5. Describe the approach taken for finding a solution. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
 The code for calculating the accuracy of the model is located in the eleventh cell of the Ipython notebook.
 
@@ -183,9 +183,9 @@ If a well known architecture was chosen:
 * The cross validation reached 0.98 accuracy, and didn make any prediction mistake on some epochs. This proves the architecture and changes made are good for the task at hand.
  
 
-###Test a Model on New Images
+### Test a Model on New Images
 
-####1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
+#### 1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
 
 Here are five German traffic signs that I found on google maps (downtown Berlin):
 
@@ -199,7 +199,7 @@ From the new images The first one may be diffucult. The 3 is very clearly marked
 The fourth image might me difficult to classify since the figure in the middle has a lot of details, and there are many similar triangular images. It seems like 32x32 pixels is not enough to describe the figure in enough detail.
 
 
-####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. I
+#### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. I
 
 Here is a visualization of the new images after resize and pre-processing:
 ![alt_text][image_new_pp]
